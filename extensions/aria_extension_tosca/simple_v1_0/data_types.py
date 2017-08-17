@@ -41,7 +41,7 @@ class Timezone(tzinfo):
         return self._offset
 
     def tzname(self, dt): # pylint: disable=unused-argument
-        return str(self._offset)
+        return unicode(self._offset)
 
     def dst(self, dt): # pylint: disable=unused-argument
         return Timezone._ZERO
@@ -75,7 +75,7 @@ class Timestamp(object):
     CANONICAL = '%Y-%m-%dT%H:%M:%S'
 
     def __init__(self, entry_schema, constraints, value, aspect): # pylint: disable=unused-argument
-        value = str(value)
+        value = unicode(value)
         match = re.match(Timestamp.REGULAR_SHORT, value)
         if match is not None:
             # Parse short form
@@ -165,7 +165,7 @@ class Version(object):
 
     REGULAR = \
         r'^(?P<major>\d+)\.(?P<minor>\d+)(\.(?P<fix>\d+)' + \
-        r'((\.(?P<qualifier>\d+))(\-(?P<build>\d+))?)?)?$'
+        r'((\.(?P<qualifier>\w+))(\-(?P<build>\d+))?)?)?$'
 
     @staticmethod
     def key(version):
@@ -175,8 +175,8 @@ class Version(object):
         return (version.major, version.minor, version.fix, version.qualifier, version.build)
 
     def __init__(self, entry_schema, constraints, value, aspect): # pylint: disable=unused-argument
-        str_value = str(value)
-        match = re.match(Version.REGULAR, str_value)
+        str_value = unicode(value)
+        match = re.match(Version.REGULAR, str_value, flags=re.UNICODE)
         if match is None:
             raise ValueError(
                 'version must be formatted as <major_version>.<minor_version>'
@@ -193,8 +193,6 @@ class Version(object):
         if self.fix is not None:
             self.fix = int(self.fix)
         self.qualifier = match.group('qualifier')
-        if self.qualifier is not None:
-            self.qualifier = int(self.qualifier)
         self.build = match.group('build')
         if self.build is not None:
             self.build = int(self.build)
@@ -215,6 +213,7 @@ class Version(object):
         return (self.major, self.minor, self.fix, self.qualifier, self.build) == \
             (version.major, version.minor, version.fix, version.qualifier, version.build)
 
+    @implements_specification('3.2.2.1', 'tosca-simple-1.0')
     def __lt__(self, version):
         if self.major < version.major:
             return True
@@ -225,9 +224,7 @@ class Version(object):
                 if self.fix < version.fix:
                     return True
                 elif self.fix == version.fix:
-                    if self.qualifier < version.qualifier:
-                        return True
-                    elif self.qualifier == version.qualifier:
+                    if self.qualifier == version.qualifier:
                         if self.build < version.build:
                             return True
         return False
@@ -375,8 +372,8 @@ class Scalar(object):
         return scalar.value
 
     def __init__(self, entry_schema, constraints, value, aspect): # pylint: disable=unused-argument
-        str_value = str(value)
-        match = re.match(self.REGULAR, str_value) # pylint: disable=no-member
+        str_value = unicode(value)
+        match = re.match(self.REGULAR, str_value, flags=re.UNICODE) # pylint: disable=no-member
         if match is None:
             raise ValueError('scalar must be formatted as <scalar> <unit>: %s' % safe_repr(value))
 
