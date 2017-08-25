@@ -141,8 +141,8 @@ def validate_required_values(context, presentation, values, definitions):
     for name, definition in definitions.iteritems():
         if getattr(definition, 'required', False) \
             and ((values is None) or (values.get(name) is None)):
-            context.validation.report('required property "%s" is not assigned a value in "%s"'
-                                      % (name, presentation._fullname),
+            context.validation.report('required property "{0}" is not assigned a value in "{1}"'
+                                      .format(name, presentation._fullname),
                                       locator=presentation._get_child_locator('properties'),
                                       level=Issue.BETWEEN_TYPES)
 
@@ -155,8 +155,8 @@ def merge_raw_parameter_definition(context, presentation, raw_property_definitio
     type2 = our_property_definition.type
     if type1 != type2:
         context.validation.report(
-            'override changes type from "%s" to "%s" for property "%s" in "%s"'
-            % (type1, type2, property_name, presentation._fullname),
+            'override changes type from "{0}" to "{1}" for property "{2}" in "{3}"'
+            .format(type1, type2, property_name, presentation._fullname),
             locator=presentation._get_child_locator(field_name, property_name),
             level=Issue.BETWEEN_TYPES)
 

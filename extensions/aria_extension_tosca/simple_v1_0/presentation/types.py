@@ -36,7 +36,7 @@ def convert_name_to_full_type_name(context, name, types_dict): # pylint: disable
 
 def get_type_by_name(context, name, *types_dict_names):
     """
-    Gets a type either by its full name or its shorthand name or typequalified name.
+    Gets a type either by its full name or its shorthand name or type-qualified name.
 
     Works by checking for ``shorthand_name`` in the types' ``_extensions`` field. See also
     :class:`~aria_extension_tosca.v1_0.presentation.extensible.ExtensiblePresentation`.
